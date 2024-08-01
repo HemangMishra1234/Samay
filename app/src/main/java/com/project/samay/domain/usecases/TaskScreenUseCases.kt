@@ -115,4 +115,11 @@ class TaskScreenUseCases(
     suspend fun deleteTask(taskEntity: TaskEntity) {
         taskRepository.deleteTaskById(taskEntity.id)
     }
+
+    suspend fun reset(){
+        allTasks.first().forEach { task->
+            val newTask = task.copy(timeSpentInMin = 0)
+            taskRepository.upsertTask(newTask)
+        }
+    }
 }

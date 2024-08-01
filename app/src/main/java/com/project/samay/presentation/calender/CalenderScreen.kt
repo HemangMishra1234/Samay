@@ -63,14 +63,15 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                     text = "Current calender is: ${
                         calendarViewModel.getCalenderAtIndex(
                             selectedCalendarIndex
-                        ) ?: "None"
+                        )?.displayName ?: "None"
                     }"
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 OutlinedCard(onClick = {
                     isSelectDialogueVisible = true
-                }) {
-                    Text(text = "Select Calender")
+                },
+                    modifier = Modifier) {
+                    Text(text = "Select Calender", modifier = Modifier.padding(16.dp))
                 }
             }
 

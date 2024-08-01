@@ -40,10 +40,13 @@ class TaskViewModel(val taskScreenUseCases: TaskScreenUseCases): ViewModel() {
         return true
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
-    fun initializeCalenders(startState: TimePickerState, endState: TimePickerState){
-        val currenTimeMillis = System.currentTimeMillis()
 
+    fun getPresentTimeSpentSum(tasks: List<TaskEntity>): String{
+        var totalPresentTime = 0L
+        tasks.forEach {
+            totalPresentTime+= it.timeSpentInMin
+        }
+        return Logic.formatInHrsAndMins(totalPresentTime)
     }
 
     fun deleteTask(taskEntity: TaskEntity){
@@ -140,6 +143,12 @@ class TaskViewModel(val taskScreenUseCases: TaskScreenUseCases): ViewModel() {
             return false
         }
         return true
+    }
+
+    fun reset(){
+        viewModelScope.launch {
+            taskScreenUseCases.reset()
+        }
     }
 
     fun showToast(context: Context, text: String){

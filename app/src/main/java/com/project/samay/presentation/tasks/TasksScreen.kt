@@ -70,6 +70,8 @@ fun TasksScreen(taskViewModel: TaskViewModel, navController: NavController) {
                 item {
                     Column(modifier = Modifier.fillMaxWidth(),
                          horizontalAlignment = Alignment.CenterHorizontally){
+                        BoldItalicText(text = "You worked for ${taskViewModel.getPresentTimeSpentSum(tasks)}")
+                        Spacer(modifier = Modifier.height(8.dp))
                         Text(text = "Present target is ${target?:15} hrs.")
                         Row {
                             TextButton(onClick = {
@@ -77,6 +79,9 @@ fun TasksScreen(taskViewModel: TaskViewModel, navController: NavController) {
                             }) {
                                 Text(text = "Click Here to edit")
                             }
+                        }
+                        TextButton(onClick = taskViewModel::reset) {
+                            Text("Reset")
                         }
                     }
                 }

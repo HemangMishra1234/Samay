@@ -19,6 +19,7 @@ import com.project.samay.presentation.domains.DomainViewModel
 import com.project.samay.presentation.domains.NavAddDomainScreen
 import com.project.samay.presentation.domains.NavUseDomainScreen
 import com.project.samay.presentation.domains.UseDomainScreen
+import com.project.samay.presentation.monitor.MonitorViewModel
 import com.project.samay.presentation.tasks.AddTaskScreen
 import com.project.samay.presentation.tasks.NavAddTaskScreen
 import com.project.samay.presentation.tasks.NavTargetScreen
@@ -31,6 +32,8 @@ import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
     val backUpRepository = BackUpRepository()
+    val usageViewModel by inject<MonitorViewModel>()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,24 +45,31 @@ class MainActivity : ComponentActivity() {
             val navController = rememberNavController()
             calendarViewModel.fetchCalenders(this@MainActivity)
             SamayTheme {
-                NavHost(navController =navController , startDestination = NavHomeScreen ){
+                NavHost(navController = navController, startDestination = NavHomeScreen) {
                     composable<NavHomeScreen> {
-                        HomeScreen(domainViewModel, taskViewModel, calendarViewModel,navController)
+                        HomeScreen(domainViewModel, taskViewModel, calendarViewModel,usageViewModel, navController)
                     }
-                    composable<NavAddDomainScreen>{
-                        val isUpdate =it.toRoute<NavAddDomainScreen>().isUpdate
-                        AddDomainScreen(viewModel = domainViewModel, isUpdate = isUpdate, navController = navController)
+                    composable<NavAddDomainScreen> {
+                        val isUpdate = it.toRoute<NavAddDomainScreen>().isUpdate
+                        AddDomainScreen(
+                            viewModel = domainViewModel,
+                            isUpdate = isUpdate,
+                            navController = navController
+                        )
                     }
                     composable<NavUseDomainScreen> {
                         UseDomainScreen(viewModel = domainViewModel, navController = navController)
                     }
-                    composable<NavTargetScreen> { 
+                    composable<NavTargetScreen> {
                         TargetScreen(navController = navController)
                     }
                     composable<NavAddTaskScreen> {
                         val isUpdate = it.toRoute<NavAddTaskScreen>().isUpdate
-                        AddTaskScreen(taskViewModel = taskViewModel, isUpdate = isUpdate
-                            , navController = navController)
+                        AddTaskScreen(
+                            taskViewModel = taskViewModel,
+                            isUpdate = isUpdate,
+                            navController = navController
+                        )
                     }
                     composable<NavUseTaskScreen> {
                         UseTaskScreen(taskViewModel = taskViewModel, navController = navController)
@@ -72,8 +82,10 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+
     override fun onResume() {
         super.onResume()
+        usageViewModel.getData()
 //        backUpRepository.restoreDatabase(this)
     }
 

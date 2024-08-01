@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Task
+import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.Task
@@ -24,6 +26,8 @@ import com.project.samay.presentation.calender.CalendarViewModel
 import com.project.samay.presentation.calender.CalenderScreen
 import com.project.samay.presentation.domains.DomainScreen
 import com.project.samay.presentation.domains.DomainViewModel
+import com.project.samay.presentation.monitor.MonitorScreen
+import com.project.samay.presentation.monitor.MonitorViewModel
 import com.project.samay.presentation.tasks.TaskViewModel
 import com.project.samay.presentation.tasks.TasksScreen
 import kotlinx.coroutines.launch
@@ -36,6 +40,7 @@ enum class NavItem(val label: String, val notSelectedIcon: ImageVector, val icon
         Icons.Outlined.Task,
         Icons.Default.Task,
     ),
+    APPS("Apps", Icons.Outlined.Apps, Icons.Default.Apps),
     DOMAINS("Domains", Icons.Outlined.Category, Icons.Default.Category),
     CALENDAR("Calendar", Icons.Outlined.CalendarToday, Icons.Default.CalendarToday)
 }
@@ -48,6 +53,7 @@ fun HomeScreen(
     domainViewModel: DomainViewModel,
     taskViewModel: TaskViewModel,
     calendarViewModel: CalendarViewModel,
+    monitorViewModel: MonitorViewModel,
     navController: NavHostController
 ) {
     val pagerState = rememberPagerState(pageCount = { NavItem.entries.size })
@@ -79,6 +85,7 @@ fun HomeScreen(
                 NavItem.DOMAINS -> DomainScreen(domainViewModel, navController = navController)
                 NavItem.TASKS -> TasksScreen(taskViewModel, navController)
                 NavItem.CALENDAR-> CalenderScreen(calendarViewModel = calendarViewModel)
+                NavItem.APPS-> MonitorScreen(monitorViewModel)
             }
         }
     }

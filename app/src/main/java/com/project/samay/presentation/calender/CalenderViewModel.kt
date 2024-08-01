@@ -17,7 +17,7 @@ class CalendarViewModel(private val calendarRepository: CalendarRepository) : Vi
         if (index == null)
             return null
         if (index < _calendarsList.value.size) {
-            return _calendarsList.value[index]
+            return _calendarsList.value[index-1]
         }
         return null
     }
