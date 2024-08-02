@@ -1,8 +1,23 @@
 package com.project.samay.presentation.domains
 
-import androidx.compose.foundation.layout.*
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -16,15 +31,19 @@ data class NavAddDomainScreen(val isUpdate: Boolean = false)
 
 @Composable
 fun AddDomainScreen(viewModel: DomainViewModel, isUpdate: Boolean, navController: NavController) {
-    val domain = viewModel.uiStateValue.value.selectedDomain
+    val domain = if (isUpdate) viewModel.uiStateValue.value.selectedDomain else null
     val allDomains by viewModel.allDomains.collectAsState(initial = emptyList())
     val context = LocalContext.current
 //    val isUpdate = domain != null
     var name by remember { mutableStateOf(domain?.name ?: "") }
-    var description by remember { mutableStateOf(domain?.description?: "") }
+    var description by remember { mutableStateOf(domain?.description ?: "") }
     var monthlyTarget by remember { mutableStateOf(domain?.monthlyTarget ?: "") }
-    var expectedPercentage by remember { mutableStateOf<String>(domain?.expectedPercentage?.toString()
-        ?: "") }
+    var expectedPercentage by remember {
+        mutableStateOf<String>(
+            domain?.expectedPercentage?.toString()
+                ?: ""
+        )
+    }
     Scaffold(
     ) {
         Box(
@@ -38,7 +57,7 @@ fun AddDomainScreen(viewModel: DomainViewModel, isUpdate: Boolean, navController
                     .padding(16.dp),
             ) {
                 Text(
-                    text = if(isUpdate) "Update your domain" else "Insert new domain",
+                    text = if (isUpdate) "Update your domain" else "Insert new domain",
                     style = MaterialTheme.typography.headlineLarge
                 )
                 Spacer(modifier = Modifier.height(36.dp))
@@ -77,12 +96,23 @@ fun AddDomainScreen(viewModel: DomainViewModel, isUpdate: Boolean, navController
                     modifier = Modifier.fillMaxWidth()
                 )
                 Spacer(modifier = Modifier.height(36.dp))
-                Text(text = "Current total percent is: ${viewModel.getTotalExpectedPercentSum(allDomains, expectedPercentage.toFloatOrNull())}")
+                Text(
+                    text = "Current total percent is: ${
+                        viewModel.getTotalExpectedPercentSum(
+                            allDomains,
+                            expectedPercentage.toFloatOrNull()
+                        )
+                    }"
+                )
                 Spacer(modifier = Modifier.height(36.dp))
 
                 Button(
                     onClick = {
-                        if(viewModel.getTotalExpectedPercentSum(allDomains, expectedPercentage.toFloatOrNull()) > 100){
+                        if (viewModel.getTotalExpectedPercentSum(
+                                allDomains,
+                                expectedPercentage.toFloatOrNull()
+                            ) > 100
+                        ) {
                             viewModel.showToast(context, "Total percentage cannot be more than 100")
                             return@Button
                         }
@@ -99,16 +129,16 @@ fun AddDomainScreen(viewModel: DomainViewModel, isUpdate: Boolean, navController
                                 navController.navigateUp()
                             }
                         } else {
-                                if (viewModel.updateDomain(
-                                        name = name,
-                                        description = description,
-                                        monthlyTarget = monthlyTarget,
-                                        expectedPercent = expectedPercentage,
-                                        context = context
-                                    )
-                                ) {
-                                    navController.navigateUp()
-                                }
+                            if (viewModel.updateDomain(
+                                    name = name,
+                                    description = description,
+                                    monthlyTarget = monthlyTarget,
+                                    expectedPercent = expectedPercentage,
+                                    context = context
+                                )
+                            ) {
+                                navController.navigateUp()
+                            }
                         }
                     },
                     modifier = Modifier.align(Alignment.CenterHorizontally)

@@ -1,5 +1,6 @@
 package com.project.samay.presentation.tasks
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -44,13 +45,24 @@ data class NavAddTaskScreen(val isUpdate: Boolean = false)
 fun AddTaskScreen(taskViewModel: TaskViewModel, isUpdate: Boolean, navController: NavController) {
     val context = LocalContext.current.applicationContext as SamayApplication
     val target by context.readTargetFromDataStore(context).collectAsState(initial = 15)
-    val task = taskViewModel.uiState.value.currentTask
+    val task = if (isUpdate) taskViewModel.uiState.value.currentTask else null
     val allDomain by taskViewModel.domains.collectAsState(initial = emptyList())
     val allTasks by taskViewModel.tasks.collectAsState(initial = emptyList())
 //    val isUpdate = domain != null
     var name by remember { mutableStateOf(task?.taskName ?: "") }
     var description by remember { mutableStateOf(task?.taskDescription ?: "") }
-    var selectedDomain by remember { mutableStateOf<DomainEntity?>(null) }
+    val domain = allDomain.find {
+        it.id == task?.domainId
+    }
+    Log.i("AddTaskScreen", "domain: $domain")
+    var selectedDomain by remember {
+        mutableStateOf<DomainEntity?>(allDomain.find {
+            it.id == task?.domainId
+        })
+    }
+    if(selectedDomain == null){
+        selectedDomain = domain
+    }
     var weight by remember {
         mutableStateOf<String>(
             task?.weight?.toString()
@@ -107,7 +119,15 @@ fun AddTaskScreen(taskViewModel: TaskViewModel, isUpdate: Boolean, navController
                 }
                 Spacer(modifier = Modifier.height(36.dp))
                 Text(
-                    text = "You will have to spend: ${Logic.formatInHrsAndMins(taskViewModel.getTimeFromWeight(allTasks, weight.toIntOrNull(), target?:15))}"
+                    text = "You will have to spend: ${
+                        Logic.formatInHrsAndMins(
+                            taskViewModel.getTimeFromWeight(
+                                allTasks,
+                                weight.toIntOrNull(),
+                                target ?: 15
+                            )
+                        )
+                    }"
                 )
 
                 Spacer(modifier = Modifier.height(36.dp))
