@@ -65,7 +65,7 @@ class TaskScreenUseCases(
         taskEntity: TaskEntity,
         start: Long,
         end: Long,
-        target: Int
+        target: Long
     ) {
         val contextApp = context as SamayApplication
         val id = contextApp.readGoalCalendarFromDataStore(context).first()
@@ -89,7 +89,7 @@ class TaskScreenUseCases(
         resetAfterGoalAchieved(target)
     }
 
-    private suspend fun resetAfterGoalAchieved(target: Int){
+    private suspend fun resetAfterGoalAchieved(target: Long){
         val allTasks = allTasks.first()
         if(isGoalAchieved(tasks = allTasks,target)){
             allTasks.forEach { task->
@@ -99,7 +99,7 @@ class TaskScreenUseCases(
         }
     }
 
-    private fun isGoalAchieved(tasks: List<TaskEntity>, target: Int): Boolean{
+    private fun isGoalAchieved(tasks: List<TaskEntity>, target: Long): Boolean{
         var achieved = true
         tasks.forEach {task->
             val t = Logic.calculateTargetTime(target, task.percentageExpected)
@@ -110,6 +110,13 @@ class TaskScreenUseCases(
         }
         Log.i("TaskScreenUseCases", "Goal is achieved: $achieved")
         return achieved
+    }
+
+    suspend fun taskCompleted(application: SamayApplication,taskEntity: TaskEntity){
+        taskRepository.deleteTaskById(taskEntity.id)
+        val presentTarget = application.readTargetFromDataStore(application).first() ?: return
+        val newTarget = presentTarget - Logic.calculateTargetTime(presentTarget, taskEntity.percentagePresent)
+        application.saveTargetToDataStore(application,newTarget)
     }
 
     suspend fun deleteTask(taskEntity: TaskEntity) {

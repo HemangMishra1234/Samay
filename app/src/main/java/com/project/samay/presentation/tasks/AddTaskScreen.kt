@@ -35,16 +35,18 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.project.samay.SamayApplication
 import com.project.samay.data.model.DomainEntity
+import com.project.samay.domain.model.DEFAULT_TARGET
 import com.project.samay.util.calculations.Logic
 import kotlinx.serialization.Serializable
 
 @Serializable
 data class NavAddTaskScreen(val isUpdate: Boolean = false)
 
+
 @Composable
 fun AddTaskScreen(taskViewModel: TaskViewModel, isUpdate: Boolean, navController: NavController) {
     val context = LocalContext.current.applicationContext as SamayApplication
-    val target by context.readTargetFromDataStore(context).collectAsState(initial = 15)
+    val target by context.readTargetFromDataStore(context).collectAsState(initial = DEFAULT_TARGET.toLong())
     val task = if (isUpdate) taskViewModel.uiState.value.currentTask else null
     val allDomain by taskViewModel.domains.collectAsState(initial = emptyList())
     val allTasks by taskViewModel.tasks.collectAsState(initial = emptyList())
@@ -118,13 +120,14 @@ fun AddTaskScreen(taskViewModel: TaskViewModel, isUpdate: Boolean, navController
                     )
                 }
                 Spacer(modifier = Modifier.height(36.dp))
+                Text(text = "Total weight till now: ${taskViewModel.getTotalWeightSum(allTasks, weight.toIntOrNull())}")
                 Text(
                     text = "You will have to spend: ${
                         Logic.formatInHrsAndMins(
                             taskViewModel.getTimeFromWeight(
                                 allTasks,
                                 weight.toIntOrNull(),
-                                target ?: 15
+                                target ?: DEFAULT_TARGET.toLong()
                             )
                         )
                     }"

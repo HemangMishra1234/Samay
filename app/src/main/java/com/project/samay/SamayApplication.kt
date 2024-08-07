@@ -25,13 +25,13 @@ class SamayApplication: Application() {
         }
     }
 
-    fun readTargetFromDataStore(context: Context): Flow<Int?> {
+    fun readTargetFromDataStore(context: Context): Flow<Long?> {
         return context.dataStore.data.map{
             it[PreferencesKeys.TARGET_KEY]
         }
     }
 
-    suspend fun saveTargetToDataStore(context: Context, target: Int){
+    suspend fun saveTargetToDataStore(context: Context, target: Long){
         context.dataStore.edit {
             it[PreferencesKeys.TARGET_KEY] = target
         }

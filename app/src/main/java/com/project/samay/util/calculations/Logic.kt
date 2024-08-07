@@ -36,8 +36,8 @@ class Logic {
             return "${hours}h ${minutes}m"
         }
 
-        fun calculateTargetTime(target: Int, expectedPercent: Float): Long{
-            val targetTime = (target*expectedPercent*60)/100
+        fun calculateTargetTime(target: Long, expectedPercent: Float): Long{
+            val targetTime = (target*expectedPercent)/100
             return targetTime.toLong()
         }
     }

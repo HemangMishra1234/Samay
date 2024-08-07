@@ -23,7 +23,7 @@ class TaskViewModel(val taskScreenUseCases: TaskScreenUseCases): ViewModel() {
     private val _uiState = mutableStateOf(TaskUIState())
     val uiState: State<TaskUIState> = _uiState
 
-    fun addTimeInMin(context: Context, timeStr: String, start: Long, end: Long, target: Int): Boolean{
+    fun addTimeInMin(context: Context, timeStr: String, start: Long, end: Long, target: Long): Boolean{
         val time = timeStr.toIntOrNull()
         val taskEntity = uiState.value.currentTask
         if(taskEntity == null){
@@ -64,7 +64,7 @@ class TaskViewModel(val taskScreenUseCases: TaskScreenUseCases): ViewModel() {
         return totalPercent+(time?:0.0f)-oldTaskPercent
     }
 
-    fun getTimeFromWeight(tasks: List<TaskEntity>, weight: Int?, target: Int): Long{
+    fun getTimeFromWeight(tasks: List<TaskEntity>, weight: Int?, target: Long): Long{
         val weightSum = getTotalWeightSum(tasks, weight)
         if(weight == null)
             return 0L
@@ -72,7 +72,7 @@ class TaskViewModel(val taskScreenUseCases: TaskScreenUseCases): ViewModel() {
         return Logic.calculateTargetTime(target, expectedPercent)
     }
 
-    private fun getTotalWeightSum(tasks: List<TaskEntity>, weight: Int?): Int{
+    fun getTotalWeightSum(tasks: List<TaskEntity>, weight: Int?): Int{
         val oldTaskWeight = uiState.value.currentTask?.weight?:0
         var totalWeight = 0
         tasks.forEach {

@@ -41,6 +41,7 @@ import androidx.navigation.NavHostController
 import com.project.samay.SamayApplication
 import com.project.samay.data.model.DomainEntity
 import com.project.samay.data.model.TaskEntity
+import com.project.samay.domain.model.DEFAULT_TARGET
 import com.project.samay.presentation.domains.BoldItalicText
 import com.project.samay.presentation.domains.DomainViewModel
 import com.project.samay.presentation.domains.NavAddDomainScreen
@@ -52,7 +53,7 @@ import com.project.samay.util.calculations.Logic
 @Composable
 fun TasksScreen(taskViewModel: TaskViewModel, navController: NavController) {
     val context = LocalContext.current.applicationContext as SamayApplication
-    val target by context.readTargetFromDataStore(context).collectAsState(initial = 15)
+    val target by context.readTargetFromDataStore(context).collectAsState(initial = DEFAULT_TARGET.toLong())
     val tasks by taskViewModel.tasks.collectAsState(initial = emptyList())
     val uiState by taskViewModel.uiState
     Box(modifier = Modifier.fillMaxSize()) {
@@ -62,7 +63,7 @@ fun TasksScreen(taskViewModel: TaskViewModel, navController: NavController) {
                 modifier = Modifier.weight(1f)
             ) {
                 itemsIndexed(tasks) { _, it ->
-                    TaskItem(task = it, isSelected = uiState.currentTask == it, viewModel = taskViewModel, target = target?:15, navController = navController){
+                    TaskItem(task = it, isSelected = uiState.currentTask == it, viewModel = taskViewModel, target = target?: DEFAULT_TARGET.toLong(), navController = navController){
                         taskViewModel.selectTask(it)
                     }
                 }
@@ -70,9 +71,10 @@ fun TasksScreen(taskViewModel: TaskViewModel, navController: NavController) {
                 item {
                     Column(modifier = Modifier.fillMaxWidth(),
                          horizontalAlignment = Alignment.CenterHorizontally){
+                        Text(text = "Total Weight is ${taskViewModel.getTotalWeightSum(tasks, null)}")
                         BoldItalicText(text = "You worked for ${taskViewModel.getPresentTimeSpentSum(tasks)}")
                         Spacer(modifier = Modifier.height(8.dp))
-                        Text(text = "Present target is ${target?:15} hrs.")
+                        Text(text = "Present target is ${Logic.formatInHrsAndMins(target?: DEFAULT_TARGET)}")
                         Row {
                             TextButton(onClick = {
                                 navController.navigate(NavTargetScreen)
@@ -103,7 +105,7 @@ fun TasksScreen(taskViewModel: TaskViewModel, navController: NavController) {
 }
 
 @Composable
-fun TaskItem(task: TaskEntity, isSelected: Boolean, viewModel: TaskViewModel, navController: NavController, target: Int,onClick: ()->Unit) {
+fun TaskItem(task: TaskEntity, isSelected: Boolean, viewModel: TaskViewModel, navController: NavController, target: Long,onClick: ()->Unit) {
     Column(
         modifier = Modifier
             .animateContentSize()
