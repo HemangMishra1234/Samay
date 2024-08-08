@@ -9,6 +9,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.platform.LocalView
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.project.samay.SamayApplication
 import com.project.samay.data.model.DomainEntity
 import com.project.samay.data.model.TaskEntity
 import com.project.samay.domain.usecases.TaskScreenUseCases
@@ -17,7 +18,7 @@ import kotlinx.coroutines.launch
 import java.time.LocalTime
 import kotlin.time.Duration.Companion.hours
 
-class TaskViewModel(val taskScreenUseCases: TaskScreenUseCases): ViewModel() {
+class TaskViewModel(private val taskScreenUseCases: TaskScreenUseCases): ViewModel() {
     val tasks = taskScreenUseCases.allTasks
     val domains = taskScreenUseCases.allDomains
     private val _uiState = mutableStateOf(TaskUIState())
@@ -70,6 +71,13 @@ class TaskViewModel(val taskScreenUseCases: TaskScreenUseCases): ViewModel() {
             return 0L
         val expectedPercent = (weight.toFloat()*100.0f)/weightSum
         return Logic.calculateTargetTime(target, expectedPercent)
+    }
+
+    fun taskCompleted(application: SamayApplication, taskEntity: TaskEntity){
+        viewModelScope.launch {
+            taskScreenUseCases.taskCompleted(application, taskEntity)
+        }
+        _uiState.value = uiState.value.copy(null)
     }
 
     fun getTotalWeightSum(tasks: List<TaskEntity>, weight: Int?): Int{

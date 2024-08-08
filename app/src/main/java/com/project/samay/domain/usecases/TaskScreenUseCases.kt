@@ -113,10 +113,12 @@ class TaskScreenUseCases(
     }
 
     suspend fun taskCompleted(application: SamayApplication,taskEntity: TaskEntity){
-        taskRepository.deleteTaskById(taskEntity.id)
         val presentTarget = application.readTargetFromDataStore(application).first() ?: return
-        val newTarget = presentTarget - Logic.calculateTargetTime(presentTarget, taskEntity.percentagePresent)
+        Log.i("TaskScreenUseCases", "Present target: $presentTarget ")
+        val newTarget = presentTarget - Logic.calculateTargetTime(presentTarget, taskEntity.percentageExpected)
+        Log.i("TaskScreenUseCases", "New target: $newTarget")
         application.saveTargetToDataStore(application,newTarget)
+        taskRepository.deleteTaskById(taskEntity.id)
     }
 
     suspend fun deleteTask(taskEntity: TaskEntity) {

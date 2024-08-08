@@ -19,6 +19,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.AlarmAdd
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Done
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.TaskAlt
 import androidx.compose.material3.FloatingActionButton
@@ -106,6 +107,7 @@ fun TasksScreen(taskViewModel: TaskViewModel, navController: NavController) {
 
 @Composable
 fun TaskItem(task: TaskEntity, isSelected: Boolean, viewModel: TaskViewModel, navController: NavController, target: Long,onClick: ()->Unit) {
+    val context = LocalContext.current.applicationContext as SamayApplication
     Column(
         modifier = Modifier
             .animateContentSize()
@@ -171,11 +173,11 @@ fun TaskItem(task: TaskEntity, isSelected: Boolean, viewModel: TaskViewModel, na
                 Text(text = task.taskDescription)
             }
             Row(modifier = Modifier.align(Alignment.End)) {
-//                IconButton(onClick = {
-////                    navController.navigate(NavUseDomainScreen)
-//                }) {
-//                    Icon(imageVector = Icons.Default.Add, contentDescription = null)
-//                }
+                IconButton(onClick = {
+                    viewModel.taskCompleted(application = context, task)
+                }) {
+                    Icon(imageVector = Icons.Default.Done, contentDescription = null)
+                }
                 IconButton(onClick = {
                     navController.navigate(NavAddTaskScreen(true))
                 }) {
