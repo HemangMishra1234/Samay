@@ -8,10 +8,12 @@ import androidx.compose.material.icons.filled.Apps
 import androidx.compose.material.icons.filled.CalendarToday
 import androidx.compose.material.icons.filled.Category
 import androidx.compose.material.icons.filled.Task
+import androidx.compose.material.icons.filled.Watch
 import androidx.compose.material.icons.outlined.Apps
 import androidx.compose.material.icons.outlined.CalendarToday
 import androidx.compose.material.icons.outlined.Category
 import androidx.compose.material.icons.outlined.Task
+import androidx.compose.material.icons.outlined.Watch
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -22,19 +24,26 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavHostController
+import com.project.samay.domain.service.StopwatchService
 import com.project.samay.presentation.calender.CalendarViewModel
 import com.project.samay.presentation.calender.CalenderScreen
 import com.project.samay.presentation.domains.DomainScreen
 import com.project.samay.presentation.domains.DomainViewModel
+import com.project.samay.presentation.focus.FocusScreen
 import com.project.samay.presentation.monitor.MonitorScreen
 import com.project.samay.presentation.monitor.MonitorViewModel
 import com.project.samay.presentation.tasks.TaskViewModel
 import com.project.samay.presentation.tasks.TasksScreen
 import kotlinx.coroutines.launch
 import kotlinx.serialization.Serializable
+import org.koin.compose.koinInject
 
 enum class NavItem(val label: String, val notSelectedIcon: ImageVector, val icon: ImageVector) {
-
+    FOCUS(
+        "Focus",
+        Icons.Outlined.Watch,
+        Icons.Default.Watch,
+    ),
     TASKS(
         "Tasks",
         Icons.Outlined.Task,
@@ -54,7 +63,8 @@ fun HomeScreen(
     taskViewModel: TaskViewModel,
     calendarViewModel: CalendarViewModel,
     monitorViewModel: MonitorViewModel,
-    navController: NavHostController
+    navController: NavHostController,
+    service: StopwatchService
 ) {
     val pagerState = rememberPagerState(pageCount = { NavItem.entries.size })
     val scope = rememberCoroutineScope()
@@ -86,6 +96,7 @@ fun HomeScreen(
                 NavItem.TASKS -> TasksScreen(taskViewModel, navController)
                 NavItem.CALENDAR-> CalenderScreen(calendarViewModel = calendarViewModel)
                 NavItem.APPS-> MonitorScreen(monitorViewModel)
+                NavItem.FOCUS -> FocusScreen(service)
             }
         }
     }

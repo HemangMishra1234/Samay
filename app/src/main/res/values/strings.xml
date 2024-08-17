@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Samay</string>
+    <string name="focus_label_icon">Focus Label Icon</string>
 </resources>

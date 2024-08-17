@@ -1,14 +1,23 @@
 package com.project.samay
 
 import BackUpRepository
+import android.content.ComponentName
+import android.content.Intent
+import android.content.ServiceConnection
 import android.os.Bundle
+import android.os.IBinder
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.project.samay.domain.service.StopwatchService
 import com.project.samay.presentation.HomeScreen
 import com.project.samay.presentation.NavHomeScreen
 import com.project.samay.presentation.calender.CalendarViewModel
@@ -34,6 +43,31 @@ class MainActivity : ComponentActivity() {
     val backUpRepository = BackUpRepository()
     val usageViewModel by inject<MonitorViewModel>()
 
+
+    private var isBound by mutableStateOf(false)
+    private lateinit var stopwatchService: StopwatchService
+    private val connection = object : ServiceConnection {
+        override fun onServiceConnected(className: ComponentName?, service: IBinder?) {
+            val binder = service as StopwatchService.StopwatchBinder
+            stopwatchService = binder.getService()
+            isBound = true
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            isBound = false
+        }
+    }
+
+    override fun onStart() {
+        super.onStart()
+        Intent(
+            this,
+            StopwatchService::class.java,
+        ).also {intent->
+            bindService(intent, connection, BIND_AUTO_CREATE)
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -42,46 +76,69 @@ class MainActivity : ComponentActivity() {
         val taskViewModel by inject<TaskViewModel>()
         val calendarViewModel by inject<CalendarViewModel>()
         setContent {
-            val navController = rememberNavController()
-            calendarViewModel.fetchCalenders(this@MainActivity)
-            SamayTheme {
-                NavHost(navController = navController, startDestination = NavHomeScreen) {
-                    composable<NavHomeScreen> {
-                        HomeScreen(domainViewModel, taskViewModel, calendarViewModel,usageViewModel, navController)
-                    }
-                    composable<NavAddDomainScreen> {
-                        val isUpdate = it.toRoute<NavAddDomainScreen>().isUpdate
-                        AddDomainScreen(
-                            viewModel = domainViewModel,
-                            isUpdate = isUpdate,
-                            navController = navController
-                        )
-                    }
-                    composable<NavUseDomainScreen> {
-                        UseDomainScreen(viewModel = domainViewModel, navController = navController)
-                    }
-                    composable<NavTargetScreen> {
-                        TargetScreen(navController = navController)
-                    }
-                    composable<NavAddTaskScreen> {
-                        val isUpdate = it.toRoute<NavAddTaskScreen>().isUpdate
-                        AddTaskScreen(
-                            taskViewModel = taskViewModel,
-                            isUpdate = isUpdate,
-                            navController = navController
-                        )
-                    }
-                    composable<NavUseTaskScreen> {
-                        UseTaskScreen(taskViewModel = taskViewModel, navController = navController)
-                    }
-                    composable<NavCalenderScreen> {
-                        CalenderScreen(calendarViewModel)
+            if (isBound) {
+                val navController = rememberNavController()
+                calendarViewModel.fetchCalenders(this@MainActivity)
+                SamayTheme {
+                    NavHost(navController = navController, startDestination = NavHomeScreen) {
+                        composable<NavHomeScreen> {
+                            HomeScreen(
+                                domainViewModel,
+                                taskViewModel,
+                                calendarViewModel,
+                                usageViewModel,
+                                navController,
+                                stopwatchService
+                            )
+                        }
+                        composable<NavAddDomainScreen> {
+                            val isUpdate = it.toRoute<NavAddDomainScreen>().isUpdate
+                            AddDomainScreen(
+                                viewModel = domainViewModel,
+                                isUpdate = isUpdate,
+                                navController = navController
+                            )
+                        }
+                        composable<NavUseDomainScreen> {
+                            UseDomainScreen(
+                                viewModel = domainViewModel,
+                                navController = navController
+                            )
+                        }
+                        composable<NavTargetScreen> {
+                            TargetScreen(navController = navController)
+                        }
+                        composable<NavAddTaskScreen> {
+                            val isUpdate = it.toRoute<NavAddTaskScreen>().isUpdate
+                            AddTaskScreen(
+                                taskViewModel = taskViewModel,
+                                isUpdate = isUpdate,
+                                navController = navController
+                            )
+                        }
+                        composable<NavUseTaskScreen> {
+                            UseTaskScreen(
+                                taskViewModel = taskViewModel,
+                                navController = navController
+                            )
+                        }
+                        composable<NavCalenderScreen> {
+                            CalenderScreen(calendarViewModel)
+                        }
                     }
                 }
+            }else{
+
             }
         }
     }
 
+    override fun onStop() {
+        //Unbinding the created connection
+        super.onStop()
+        unbindService(connection)
+        isBound = false
+    }
 
     override fun onResume() {
         super.onResume()

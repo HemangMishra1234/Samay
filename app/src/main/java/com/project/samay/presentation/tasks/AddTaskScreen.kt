@@ -30,6 +30,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -199,10 +200,12 @@ fun SelectDomainDialogue(domains: List<DomainEntity>, onSelect: (DomainEntity?) 
     var selectedDialog by remember {
         mutableStateOf<DomainEntity?>(null)
     }
-    BasicAlertDialog(onDismissRequest = { onSelect(selectedDialog) }) {
+    BasicAlertDialog(onDismissRequest = { onSelect(selectedDialog) },
+        modifier = Modifier.clip(RoundedCornerShape(16.dp))) {
         Box(
             modifier = Modifier
                 .background(MaterialTheme.colorScheme.surfaceVariant)
+                .clip(RoundedCornerShape(16.dp))
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outline,
@@ -215,6 +218,7 @@ fun SelectDomainDialogue(domains: List<DomainEntity>, onSelect: (DomainEntity?) 
                     Text(
                         text = domain.name,
                         modifier = Modifier
+                            .fillMaxWidth()
                             .clickable {
                                 selectedDialog = domain
                                 onSelect(selectedDialog)
