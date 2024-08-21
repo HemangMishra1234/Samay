@@ -1,7 +1,9 @@
 package com.project.samay.domain.usecases
 
 import android.content.Context
+import android.util.Log
 import com.project.samay.data.model.TaskEntity
+import com.project.samay.util.calculations.TimeUtils
 
 class FocusScreenUseCases(
     private val taskScreenUseCases: TaskScreenUseCases
@@ -16,6 +18,7 @@ class FocusScreenUseCases(
         end: Long,
         target: Long
     ){
+        Log.i("FocusScreenUseCases", "start: ${TimeUtils.convertMillisToString(start)} end: ${TimeUtils.convertMillisToString(end)}")
         taskScreenUseCases.useTimeInTask(
             context,
             time,

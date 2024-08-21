@@ -54,6 +54,6 @@ val appModules = module {
 
     viewModel { DomainViewModel(get()) }
     viewModel { TaskViewModel(get()) }
-    viewModel { CalendarViewModel(get()) }
+    factory { CalendarViewModel(get()) }
     viewModel { MonitorViewModel(get())}
 }

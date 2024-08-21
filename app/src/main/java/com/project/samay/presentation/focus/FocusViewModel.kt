@@ -51,8 +51,8 @@ class FocusViewModel(private val focusScreenUseCases: FocusScreenUseCases): View
         if(hrs == null || min == null) return
         val time = hrs*60+min
         viewModelScope.launch {
-            focusScreenUseCases.useTime(context, time, selectedTask, System.currentTimeMillis(),
-                TimeUtils.addMinutesToMillis(System.currentTimeMillis(), time),
+            focusScreenUseCases.useTime(context, time, selectedTask,
+                TimeUtils.addMinutesToMillis(System.currentTimeMillis(), -time),System.currentTimeMillis(),
                 target)
         }
     }
