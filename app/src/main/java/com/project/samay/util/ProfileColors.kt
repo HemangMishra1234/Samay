@@ -1,5 +1,7 @@
 package com.project.samay.util
 
+import com.project.samay.util.ProfileColors.entries
+
 enum class ProfileColors(val hex: Long) {
     AQUA(0xFF00FFFF),
     CORAL(0xFFFF7F50),
@@ -20,5 +22,12 @@ enum class ProfileColors(val hex: Long) {
     SALMON(0xFFFA8072),
     TURQUOISE(0xFF40E0D0),
     VIOLET(0xFFEE82EE),
-    YELLOW_GREEN(0xFF9ACD32)
+    YELLOW_GREEN(0xFF9ACD32);
+
+
+}
+
+fun getRandomColor(): ProfileColors{
+    val values = entries.toTypedArray()
+    return values[values.indices.random()]
 }

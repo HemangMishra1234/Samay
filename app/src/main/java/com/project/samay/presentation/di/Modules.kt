@@ -6,10 +6,12 @@ import androidx.room.Room
 import com.project.samay.data.repository.DomainRepository
 import com.project.samay.data.repository.TaskRepository
 import com.project.samay.data.source.local.AppDatabase
+import com.project.samay.data.source.local.CalendarDatabase
 import com.project.samay.domain.notification.NotificationModule
 import com.project.samay.domain.repository.CalendarRepository
 import com.project.samay.domain.repository.UsageRepository
 import com.project.samay.domain.service.StopwatchService
+import com.project.samay.domain.usecases.CalendarScreenUseCases
 import com.project.samay.domain.usecases.DomainScreenUseCases
 import com.project.samay.domain.usecases.FocusScreenUseCases
 import com.project.samay.domain.usecases.MonitorAppsScreenUseCases
@@ -32,6 +34,11 @@ val appModules = module {
             .fallbackToDestructiveMigration()
             .build()
     }
+    single {
+        Room.databaseBuilder(androidApplication(), CalendarDatabase::class.java, "calendar_db")
+            .fallbackToDestructiveMigration()
+            .build()
+    }
 
     single { NotificationModule.provideNotificationManager(androidApplication()) }
     single { NotificationModule.provideNotificationBuilder(androidApplication()) }
@@ -39,9 +46,10 @@ val appModules = module {
     single { StopwatchService() }
 
     single { UsageRepository(androidApplication()) }
-    single { CalendarRepository()}
+    single { CalendarRepository(get())}
     single { get<AppDatabase>().domainDao() }
     single { get<AppDatabase>().taskDao() }
+    single { get<CalendarDatabase>().calendarDao() }
     single { DomainRepository(get()) }
     single { TaskRepository(get())}
 
@@ -49,11 +57,12 @@ val appModules = module {
     single { DomainScreenUseCases(get()) }
     single { TaskScreenUseCases(get(), get(), get()) }
     single { FocusScreenUseCases(get()) }
+    single { CalendarScreenUseCases(get(), get()) }
 
     single { FocusViewModel(get()) }
 
     viewModel { DomainViewModel(get()) }
     viewModel { TaskViewModel(get()) }
-    factory { CalendarViewModel(get()) }
+    viewModel { CalendarViewModel(get(), get()) }
     viewModel { MonitorViewModel(get())}
 }

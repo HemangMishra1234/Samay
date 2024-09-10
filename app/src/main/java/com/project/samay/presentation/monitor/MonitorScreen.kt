@@ -1,5 +1,6 @@
 package com.project.samay.presentation.monitor
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -42,6 +43,7 @@ fun MonitorScreen(viewModel: MonitorViewModel) {
     val isEmergency by viewModel.isEmergency
     val isMonitored by viewModel.areAppsMonitored
     val data by viewModel.data
+    Log.i("MonitorScreen", "isEmergency: $isEmergency, isMonitored: $isMonitored, data: $data")
     val coroutineScope = rememberCoroutineScope()
     Column {
         TopBarMonitor(viewModel = viewModel)

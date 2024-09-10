@@ -6,17 +6,23 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.interaction.DragInteraction
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
+import androidx.media3.session.MediaController
+import androidx.media3.session.SessionToken
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
+import com.project.samay.domain.service.AudioService
 import com.project.samay.domain.service.StopwatchService
 import com.project.samay.presentation.HomeScreen
 import com.project.samay.presentation.NavHomeScreen
@@ -42,6 +48,9 @@ import org.koin.android.ext.android.inject
 class MainActivity : ComponentActivity() {
     val backUpRepository = BackUpRepository()
     val usageViewModel by inject<MonitorViewModel>()
+    val domainViewModel by inject<DomainViewModel>()
+    val taskViewModel by inject<TaskViewModel>()
+    val calendarViewModel by inject<CalendarViewModel>()
 
 
     private var isBound by mutableStateOf(false)
@@ -66,20 +75,23 @@ class MainActivity : ComponentActivity() {
         ).also {intent->
             bindService(intent, connection, BIND_AUTO_CREATE)
         }
+
+        //Audio service setup:
+        val sessionToken = SessionToken(this, ComponentName(this, AudioService::class.java))
+        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+//        controllerFuture.addListener(
+
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         enableEdgeToEdge()
-        val domainViewModel by inject<DomainViewModel>()
-        val taskViewModel by inject<TaskViewModel>()
-        val calendarViewModel by inject<CalendarViewModel>()
         setContent {
             if (isBound) {
                 val navController = rememberNavController()
                 calendarViewModel.fetchCalenders(this@MainActivity)
-                SamayTheme {
+                SamayTheme(darkTheme = true) {
                     NavHost(navController = navController, startDestination = NavHomeScreen) {
                         composable<NavHomeScreen> {
                             HomeScreen(
@@ -143,12 +155,21 @@ class MainActivity : ComponentActivity() {
     override fun onResume() {
         super.onResume()
         usageViewModel.getData()
+        calendarViewModel.refresh(this)
 //        backUpRepository.restoreDatabase(this)
     }
 
     override fun onPause() {
         super.onPause()
 //        backUpRepository.backupDatabase(this)
+    }
+
+    @Composable
+    fun Test(){
+        if(isSystemInDarkTheme()){
+            Log.i("MainActivity","Dark Theme")
+        }else
+            Log.i("MainActivity","Light Theme")
     }
 
 }

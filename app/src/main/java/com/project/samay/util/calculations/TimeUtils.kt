@@ -1,6 +1,9 @@
 package com.project.samay.util.calculations
 
+import java.text.SimpleDateFormat
 import java.util.Calendar
+import java.util.Date
+import java.util.Locale
 import java.util.TimeZone
 
 class TimeUtils {
@@ -46,6 +49,32 @@ class TimeUtils {
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
             val minute = calendar.get(Calendar.MINUTE)
             return String.format(null,"%02d:%02d", hour, minute)
+        }
+
+        fun getTimeInMillisOfDaysAgo(daysAgo: Int): Long{
+            val calendar = Calendar.getInstance(TimeZone.getDefault())
+            calendar.add(Calendar.DAY_OF_YEAR, -daysAgo)
+            return calendar.timeInMillis
+        }
+
+        fun covertMillisToNumberOfDaysAgo(timeInMillis: Long): Int {
+            val calendar = Calendar.getInstance(TimeZone.getDefault())
+            val currentTime = System.currentTimeMillis()
+            val diff = currentTime - timeInMillis
+            return (diff / (1000 * 60 * 60 * 24)).toInt()
+        }
+
+        fun convertMillisToDate(currentTimeMillis: Long): String {
+            val date = Date(currentTimeMillis)
+            val dateFormat = SimpleDateFormat("MMM dd", Locale.getDefault())
+            return dateFormat.format(date)
+        }
+
+        fun convertMillisToHoursAndMinutes(timeInMillis: Long): String {
+            val totalMinutes = timeInMillis / (1000 * 60)
+            val hours = totalMinutes / 60
+            val minutes = totalMinutes % 60
+            return "${hours}h ${minutes}min"
         }
     }
 }
