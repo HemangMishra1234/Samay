@@ -64,10 +64,10 @@ class CalendarViewModel(
                 _calendarUIState.value.selectedEvent!!,
                 _calendarUIState.value.selectedDomain!!
             )
+            selectEvent(null)
+            selectDomain(null)
+            refresh(context)
         }
-        selectEvent(null)
-        selectDomain(null)
-        refresh(context)
     }
 
     fun selectDomain(domainEntity: DomainEntity?) {
@@ -111,4 +111,3 @@ class CalendarViewModel(
         }
     }
 }
-

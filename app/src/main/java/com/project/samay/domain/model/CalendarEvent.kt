@@ -3,9 +3,8 @@ package com.project.samay.domain.model
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 
-@Entity
+@Entity(primaryKeys = ["id", "dtstart"])
 data class CalendarEvent(
-    @PrimaryKey
     val id: Long,
     val color: String,
     val title: String,

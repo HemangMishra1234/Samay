@@ -97,6 +97,7 @@ fun CalenderScreen(calendarViewModel: CalendarViewModel) {
                     items(uiState.events.size) { index: Int ->
                         val event = uiState.events[index]
                         if (calendarViewModel.validate(event, selectedCalendarIndex?.toLong())) {
+                            Log.i("Calendar screen", "$event")
                             CalendarItem(
                                 calendarEvent = event,
                                 isSelected = uiState.selectedEvent == event,

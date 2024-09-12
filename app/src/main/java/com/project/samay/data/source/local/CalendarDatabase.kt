@@ -6,7 +6,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import com.project.samay.domain.model.CalendarEvent
 
-@Database(entities = [CalendarEvent::class], version = 1, exportSchema = false)
+@Database(entities = [CalendarEvent::class], version = 2, exportSchema = false)
 abstract class CalendarDatabase : RoomDatabase(){
     abstract fun calendarDao(): CalendarDao
 
