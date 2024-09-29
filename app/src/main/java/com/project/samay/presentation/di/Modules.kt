@@ -7,6 +7,8 @@ import com.project.samay.data.repository.DomainRepository
 import com.project.samay.data.repository.TaskRepository
 import com.project.samay.data.source.local.AppDatabase
 import com.project.samay.data.source.local.CalendarDatabase
+import com.project.samay.domain.backup.BackupRepo
+import com.project.samay.domain.mediaplayer.MusicPlayer
 import com.project.samay.domain.notification.NotificationModule
 import com.project.samay.domain.repository.CalendarRepository
 import com.project.samay.domain.repository.UsageRepository
@@ -16,9 +18,11 @@ import com.project.samay.domain.usecases.DomainScreenUseCases
 import com.project.samay.domain.usecases.FocusScreenUseCases
 import com.project.samay.domain.usecases.MonitorAppsScreenUseCases
 import com.project.samay.domain.usecases.TaskScreenUseCases
+import com.project.samay.presentation.backup.BackupScreenViewModel
 import com.project.samay.presentation.calender.CalendarViewModel
 import com.project.samay.presentation.domains.DomainViewModel
 import com.project.samay.presentation.focus.FocusViewModel
+import com.project.samay.presentation.meditate.MeditateViewModel
 import com.project.samay.presentation.monitor.MonitorViewModel
 import com.project.samay.presentation.tasks.TaskViewModel
 import org.koin.android.ext.koin.androidApplication
@@ -43,6 +47,8 @@ val appModules = module {
     single { NotificationModule.provideNotificationManager(androidApplication()) }
     single { NotificationModule.provideNotificationBuilder(androidApplication()) }
 
+    single { MusicPlayer(androidApplication()) }
+
     single { StopwatchService() }
 
     single { UsageRepository(androidApplication()) }
@@ -52,6 +58,7 @@ val appModules = module {
     single { get<CalendarDatabase>().calendarDao() }
     single { DomainRepository(get()) }
     single { TaskRepository(get())}
+    single { BackupRepo()}
 
     single { MonitorAppsScreenUseCases(get(), get()) }
     single { DomainScreenUseCases(get()) }
@@ -59,10 +66,11 @@ val appModules = module {
     single { FocusScreenUseCases(get()) }
     single { CalendarScreenUseCases(get(), get()) }
 
-    single { FocusViewModel(get()) }
-
+    viewModel { FocusViewModel(get()) }
     viewModel { DomainViewModel(get()) }
     viewModel { TaskViewModel(get()) }
     viewModel { CalendarViewModel(get(), get()) }
     viewModel { MonitorViewModel(get())}
+    viewModel {MeditateViewModel(get())}
+    viewModel { BackupScreenViewModel(get())}
 }

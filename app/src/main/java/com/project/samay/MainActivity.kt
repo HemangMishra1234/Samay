@@ -6,13 +6,9 @@ import android.content.Intent
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.interaction.DragInteraction
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -24,8 +20,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
 import com.project.samay.domain.service.AudioService
 import com.project.samay.domain.service.StopwatchService
+import com.project.samay.presentation.Destinations
 import com.project.samay.presentation.HomeScreen
 import com.project.samay.presentation.NavHomeScreen
+import com.project.samay.presentation.backup.BackupScreen
+import com.project.samay.presentation.backup.BackupScreenViewModel
 import com.project.samay.presentation.calender.CalendarViewModel
 import com.project.samay.presentation.calender.CalenderScreen
 import com.project.samay.presentation.calender.NavCalenderScreen
@@ -34,6 +33,8 @@ import com.project.samay.presentation.domains.DomainViewModel
 import com.project.samay.presentation.domains.NavAddDomainScreen
 import com.project.samay.presentation.domains.NavUseDomainScreen
 import com.project.samay.presentation.domains.UseDomainScreen
+import com.project.samay.presentation.meditate.MeditateViewModel
+import com.project.samay.presentation.meditate.MeditationMusicScreen
 import com.project.samay.presentation.monitor.MonitorViewModel
 import com.project.samay.presentation.tasks.AddTaskScreen
 import com.project.samay.presentation.tasks.NavAddTaskScreen
@@ -46,11 +47,12 @@ import com.project.samay.ui.theme.SamayTheme
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
-    val backUpRepository = BackUpRepository()
     val usageViewModel by inject<MonitorViewModel>()
     val domainViewModel by inject<DomainViewModel>()
     val taskViewModel by inject<TaskViewModel>()
     val calendarViewModel by inject<CalendarViewModel>()
+    val meditateViewModel by inject<MeditateViewModel>()
+    val backupViewModel by inject<BackupScreenViewModel>()
 
 
     private var isBound by mutableStateOf(false)
@@ -72,7 +74,7 @@ class MainActivity : ComponentActivity() {
         Intent(
             this,
             StopwatchService::class.java,
-        ).also {intent->
+        ).also { intent ->
             bindService(intent, connection, BIND_AUTO_CREATE)
         }
 
@@ -92,7 +94,11 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 calendarViewModel.fetchCalenders(this@MainActivity)
                 SamayTheme(darkTheme = true) {
-                    NavHost(navController = navController, startDestination = NavHomeScreen) {
+
+                    NavHost(
+                        navController = navController,
+                        startDestination = NavHomeScreen
+                    ) {
                         composable<NavHomeScreen> {
                             HomeScreen(
                                 domainViewModel,
@@ -128,18 +134,28 @@ class MainActivity : ComponentActivity() {
                                 navController = navController
                             )
                         }
+
                         composable<NavUseTaskScreen> {
                             UseTaskScreen(
                                 taskViewModel = taskViewModel,
                                 navController = navController
                             )
                         }
+
                         composable<NavCalenderScreen> {
                             CalenderScreen(calendarViewModel)
                         }
+
+                        composable<Destinations.MeditationScreen> {
+                            MeditationMusicScreen(meditateViewModel = meditateViewModel)
+                        }
+
+                        composable<Destinations.BackupScreen> {
+                            BackupScreen(backupScreenViewModel = backupViewModel)
+                        }
                     }
+
                 }
-            }else{
 
             }
         }
@@ -164,12 +180,5 @@ class MainActivity : ComponentActivity() {
 //        backUpRepository.backupDatabase(this)
     }
 
-    @Composable
-    fun Test(){
-        if(isSystemInDarkTheme()){
-            Log.i("MainActivity","Dark Theme")
-        }else
-            Log.i("MainActivity","Light Theme")
-    }
 
 }

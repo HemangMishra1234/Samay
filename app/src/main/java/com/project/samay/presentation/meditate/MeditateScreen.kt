@@ -35,9 +35,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.project.samay.R
+import com.project.samay.util.calculations.MediaUtil
 
 @Composable
-fun MeditationMusicScreen() {
+fun MeditationMusicScreen(meditateViewModel: MeditateViewModel) {
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -89,7 +90,9 @@ fun MeditationMusicScreen() {
                     tint = Color(0xFF646464)
                 )
             }
-            IconButton(onClick = { /* Play/Pause action */ }) {
+            IconButton(onClick = {
+                meditateViewModel.onClickPlayPauseButton()
+            }) {
                 Icon(Icons.Default.PlayArrow, contentDescription = "Play", tint = Color(0xFF393E46))
             }
             IconButton(onClick = { /* Next action */ }) {
@@ -112,18 +115,11 @@ fun MeditationMusicScreen() {
                 horizontalArrangement = Arrangement.SpaceBetween,
                 modifier = Modifier.fillMaxWidth(0.8f)
             ) {
-                Text(text = "4:32")
-                Text(text = "10:00")
+                Text(text = MediaUtil.getTimeStampFromSeconds(360))
+                Text(text = MediaUtil.getTimeStampFromSeconds(9000))
             }
         }
 
         Spacer(modifier = Modifier.height(16.dp))
     }
-}
-
-
-@Preview(showBackground = true)
-@Composable
-fun MeditationMusicScreenPreview() {
-    MeditationMusicScreen()
 }
