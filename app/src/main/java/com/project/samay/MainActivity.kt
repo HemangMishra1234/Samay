@@ -1,6 +1,5 @@
 package com.project.samay
 
-import BackUpRepository
 import android.content.ComponentName
 import android.content.Intent
 import android.content.ServiceConnection
@@ -12,13 +11,10 @@ import androidx.activity.enableEdgeToEdge
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.media3.session.MediaController
-import androidx.media3.session.SessionToken
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.toRoute
-import com.project.samay.domain.service.AudioService
 import com.project.samay.domain.service.StopwatchService
 import com.project.samay.presentation.Destinations
 import com.project.samay.presentation.HomeScreen
@@ -47,12 +43,12 @@ import com.project.samay.ui.theme.SamayTheme
 import org.koin.android.ext.android.inject
 
 class MainActivity : ComponentActivity() {
-    val usageViewModel by inject<MonitorViewModel>()
-    val domainViewModel by inject<DomainViewModel>()
-    val taskViewModel by inject<TaskViewModel>()
-    val calendarViewModel by inject<CalendarViewModel>()
-    val meditateViewModel by inject<MeditateViewModel>()
-    val backupViewModel by inject<BackupScreenViewModel>()
+    private val usageViewModel by inject<MonitorViewModel>()
+    private val domainViewModel by inject<DomainViewModel>()
+    private val taskViewModel by inject<TaskViewModel>()
+    private val calendarViewModel by inject<CalendarViewModel>()
+    private val meditateViewModel by inject<MeditateViewModel>()
+    private val backupViewModel by inject<BackupScreenViewModel>()
 
 
     private var isBound by mutableStateOf(false)
@@ -77,16 +73,27 @@ class MainActivity : ComponentActivity() {
         ).also { intent ->
             bindService(intent, connection, BIND_AUTO_CREATE)
         }
-
-        //Audio service setup:
-        val sessionToken = SessionToken(this, ComponentName(this, AudioService::class.java))
-        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
+//
+//        //Audio service setup:
+//        val sessionToken = SessionToken(this, ComponentName(this, AudioService::class.java))
+//        val controllerFuture = MediaController.Builder(this, sessionToken).buildAsync()
 //        controllerFuture.addListener(
 
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+//        super.onStart()
+//        Intent(
+//            this,
+//            StopwatchService::class.java,
+//        ).also { intent ->
+//            bindService(intent, connection, BIND_AUTO_CREATE)
+//        }
+
+        //Audio service setup:
+//        val sessionToken = SessionToken(this, ComponentName(this, AudioService::class.java))
+
 
         enableEdgeToEdge()
         setContent {

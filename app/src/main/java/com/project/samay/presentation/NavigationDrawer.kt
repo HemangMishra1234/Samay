@@ -10,7 +10,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -25,11 +24,12 @@ fun NavigationDrawerContent(navController: NavController) {
                 RowOfDrawer(
                     navigationDrawerItems = NavigationDrawerItems.entries[index],
                     modifier = Modifier
-                ){
-                    when(NavigationDrawerItems.entries[index]){
+                ) {
+                    when (NavigationDrawerItems.entries[index]) {
                         NavigationDrawerItems.BACKUP -> {
                             navController.navigate(Destinations.BackupScreen)
                         }
+
                         NavigationDrawerItems.SETTINGS -> {
 
                         }
@@ -41,7 +41,11 @@ fun NavigationDrawerContent(navController: NavController) {
 }
 
 @Composable
-fun RowOfDrawer( modifier: Modifier, navigationDrawerItems: NavigationDrawerItems, onClick: ()-> Unit) {
+fun RowOfDrawer(
+    modifier: Modifier,
+    navigationDrawerItems: NavigationDrawerItems,
+    onClick: () -> Unit
+) {
     Row(
         modifier = modifier
             .fillMaxWidth()
